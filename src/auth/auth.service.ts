@@ -1,10 +1,11 @@
-import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -46,4 +47,19 @@ export class AuthService {
     async findProfile(userId: number) {
         return this.userRepo.findOne({ where: { id: userId } });
     }
+
+    async updateProfile(id: number, updateDto: UpdateUserDto) {
+        const userWithSameEmail = await this.userRepo.findOne({
+            where: { email: updateDto.email },
+        });
+
+        if (userWithSameEmail && userWithSameEmail.id !== id) {
+            throw new BadRequestException('Email sudah digunakan');
+        }
+
+        await this.userRepo.update(id, updateDto);
+        return this.userRepo.findOneBy({ id });
+    }
+      
+      
 }

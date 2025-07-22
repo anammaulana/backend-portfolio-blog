@@ -1,8 +1,9 @@
-import { Controller, Post, Body, UseGuards, Get, Request } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Get, Request, Put } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { LoginDto } from './dto/login.dto';
 import { JwtAuthGuard } from './jwt-auth.guard';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('api/auth')
 export class AuthController {
@@ -23,4 +24,15 @@ export class AuthController {
     getProfile(@Request() req) {
         return this.authService.findProfile(req.user.userId);
     }
+
+    @UseGuards(JwtAuthGuard) // gunakan guard JWT
+    @Put('profile')
+    async updateProfile(
+        @Request() req,
+        @Body() dto: UpdateUserDto,
+    ) {
+        const userId = req.user.id; // id dari JWT
+        return this.authService.updateProfile(userId, dto);
+    }
+
 }
