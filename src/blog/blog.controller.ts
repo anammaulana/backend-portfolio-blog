@@ -11,8 +11,10 @@ export class BlogController {
     constructor(private readonly blogService: BlogService) { }
     
     @Get()
-    findAll() {
-        return this.blogService.findAll();
+    async findAll() {
+        const data = await this.blogService.findAll();
+        return APIResponse.success(data , 'Blogs Berhasil Di ambil')
+        
     }
 
     @Get(':id')
