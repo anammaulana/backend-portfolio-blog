@@ -1,6 +1,7 @@
 
 import { Exclude } from 'class-transformer';
 import { BlogPostEntity } from 'src/blog/entities/blog-post.entity';
+import { Project } from 'src/portfolio/entities/project.entity';
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 
 @Entity()
@@ -20,4 +21,8 @@ export class User {
 
     @OneToMany(() => BlogPostEntity, (blog) => blog.author)
     blogs: BlogPostEntity[];
+
+    @OneToMany(() => Project, portfolio => portfolio.user)
+    portfolios: Project[];
+
 }
